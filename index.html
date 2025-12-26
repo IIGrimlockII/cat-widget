@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Day Night Cat</title>
+
+  <style>
+    
+    img {
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+      html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      overflow: hidden;
+      font-family: "SF Rounded", -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    .scene {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      transform-origin: top left;
+    }
+
+
+    .scene.day {
+      background: linear-gradient(#87ceeb, #fefefe);
+    }
+
+    .scene.night {
+      background: linear-gradient(#0b1d3a, #000000);
+    }
+
+    .sun {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      background: #ffd93b;
+      border-radius: 50%;
+      left: 10%;
+      top: 20%;
+    }
+
+    .moon {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      background: #f5f3ce;
+      border-radius: 50%;
+      right: 15%;
+      top: 25%;
+    }
+
+    .stars {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(white 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .sun,
+    .moon,
+    .stars {
+      transition: opacity 2s ease;
+    }
+
+
+
+    /* state-based sky visibility */
+    .scene.day .sun {
+      opacity: 1;
+    }
+
+    .scene.day .moon,
+    .scene.day .stars {
+      opacity: 0;
+    }
+
+    .scene.day .corner-text {
+      color: rgba(0, 0, 0, 0.6);
+    }
+
+    .scene.day .night-only {
+      display: none;
+    }
+
+    .scene.night .sun {
+      opacity: 0;
+    }
+
+    .scene.night .moon,
+    .scene.night .stars {
+      opacity: 1;
+    }
+
+    .scene.night .corner-text {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .scene.night .night-only {
+      display: inline;
+    }
+
+    .bg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+      transition: opacity 2.5s ease;
+    }
+
+    .bg img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .day-bg { opacity: 0; }
+    .night-bg { opacity: 0; }
+
+    .scene.day .day-bg { opacity: 1; }
+    .scene.night .night-bg { opacity: 1; }
+
+
+    /* corner text */
+    .corner-text {
+      position: absolute;
+      bottom: 24px;
+      right: 24px;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.85);
+      text-align: right;
+      white-space: nowrap;
+      z-index: 3;
+      letter-spacing: 0.5px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-family: 'VT323', monospace;
+    }
+
+    .corner-text span {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+      pointer-events: none;
+    }
+    .corner-text span.active {
+      opacity: 1;
+    }
+
+    /* text delays */
+    .corner-text span:nth-child(1) { --i: 0; }
+    .corner-text span:nth-child(2) { --i: 1; }
+    .corner-text span:nth-child(3) { --i: 2; }
+    .corner-text span:nth-child(4) { --i: 3; }
+    .corner-text span:nth-child(5) { --i: 4; }
+    .corner-text span:nth-child(6) { --i: 5; }
+    .corner-text span:nth-child(7) { --i: 6; }
+
+
+
+    /* CAT ZONE — foreground anchor */
+    .cat-zone {
+      position: absolute;
+      bottom: -8%;          /* pushes stand off-screen */
+      left: 4%;
+      width: 140px;         /* MUCH larger presence */
+      height: 260px;        /* tall enough for stand */
+      z-index: 2;
+      pointer-events: none;
+    }
+    .cat-stand {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 75px;          /* scale UP from original */
+      height: auto;
+    }
+    .cat-bed {
+      position: absolute;
+      bottom: 70px;         /* adjust until it sits snug */
+      left: 50%;
+      transform: translateX(-50%);
+      width: 114px;         /* larger than stand */
+      height: auto;
+    }
+
+    /* CAT FRAME STACK */
+    .cat-sprite {
+      position: absolute;
+      bottom: 90px;          /* stays exactly where you tuned it */
+      left: 50%;
+      transform: translateX(-50%);
+      width: 48px;
+      height: 48px;
+      pointer-events: none;
+    }
+
+    /* individual frames */
+    .cat-sprite img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: auto;
+      opacity: 0;
+      image-rendering: pixelated;
+    }
+
+    .cat-day {
+      transform: translateX(-50%) translate(4px,-8px);
+    }
+
+
+    /* sleep frame alignment fixes */
+    
+    /* FRAME 1 — inhale (slightly up & right) */
+    .cat-night img:nth-child(1) {
+      transform: translate(3px, -2px);
+    }
+
+    /* FRAME 2 — peak inhale (neutral) */
+    .cat-night img:nth-child(2) {
+      transform: translate(0px, 1px);
+    }
+
+    /* FRAME 3 — exhale (slightly down & left) */
+    .cat-night img:nth-child(3) {
+      transform: translate(3px, 1px);
+    }
+
+    /* FRAME 4 — rest (matches frame 1 for loop smoothness) */
+    .cat-night img:nth-child(4) {
+      transform: translate(3px, -2px);
+    }
+    .cat-night {
+      transform: translateX(-50%) translate(2px,4px);
+    }
+
+
+    /* visible frame */
+    .cat-sprite img.active {
+      opacity: 1;
+    }
+
+    .cat-sprite,
+    .cat-bed,
+    .cat-stand {
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+
+
+    /* day vs night swap */
+    .scene.day .cat-day { opacity: 1; }
+    .scene.day .cat-night { opacity: 0; }
+
+    .scene.night .cat-day { opacity: 0; }
+    .scene.night .cat-night { opacity: 1; }
+
+
+    /* animations */
+
+    /* cloud drift – speed emphasis, edge-safe */
+    .clouds {
+      animation-timing-function: cubic-bezier(0.45, 0.05, 0.55, 0.95);
+    }
+
+    .clouds.back {
+      animation: driftBack 60s ease-in-out infinite alternate;
+    }
+
+    .clouds.mid {
+      animation: driftMid 45s ease-in-out infinite alternate;
+    }
+
+    .clouds.front {
+      animation:
+        driftFront 35s ease-in-out infinite alternate,
+        cloudFloat 14s ease-in-out infinite;
+    }
+
+
+    @keyframes breathe {
+      0%, 100% {
+        transform: translateX(-50%) translateY(0) scale(1);
+      }
+      50% {
+        transform: translateX(-50%) translateY(-1px) scale(1.03);
+      }
+    }
+
+
+    @keyframes driftBack {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-8px); }
+    }
+
+    @keyframes driftMid {
+      from { transform: translateX(0); }
+      to   { transform: translateX(6px); } /* opposite direction */
+    }
+
+    @keyframes driftFront {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-12px); }
+    }
+
+    @keyframes cloudFloat {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-2px); }
+    }
+
+
+  </style>
+</head>
+
+<body>
+  <div class="scene">
+
+    <!-- DAY BACKGROUND -->
+    <div class="bg day-bg">
+      <img src="assets/day/sky.png" class="bg-sky">
+      <img src="assets/day/clouds-back.png" class="clouds back">
+      <img src="assets/day/clouds-mid.png" class="clouds mid">
+      <img src="assets/day/clouds-front.png" class="clouds front">
+      <img src="assets/day/sun.png" class="sun-layer">
+    </div>
+
+    <!-- NIGHT BACKGROUND -->
+    <div class="bg night-bg">
+      <img src="assets/night/sky.png" class="bg-sky">
+      <img src="assets/night/clouds-back.png" class="clouds back">
+      <img src="assets/night/clouds-front.png" class="clouds front">
+      <img src="assets/night/moon.png" class="moon-layer">
+    </div>
+
+    <!-- Cat Zone -->
+    <div class="cat-zone">
+      <img src="assets/cat/stand.png" class="cat-stand" alt="">
+      <img src="assets/cat/bed.png" class="cat-bed" alt="">
+
+      <div class="cat-sprite cat-day">
+      <img src="assets/cat/day/idle-1.png">
+      <img src="assets/cat/day/idle-2.png">
+      <img src="assets/cat/day/idle-3.png">
+      <img src="assets/cat/day/idle-4.png">
+    </div>
+
+    <div class="cat-sprite cat-night">
+      <img src="assets/cat/night/sleep-1.png">
+      <img src="assets/cat/night/sleep-2.png">
+      <img src="assets/cat/night/sleep-3.png">
+      <img src="assets/cat/night/sleep-4.png">
+    </div>
+
+    </div>
+
+
+    <!-- Cycling text -->
+    <div class="corner-text">
+      <span class="night-only">goodnight baby :)</span>
+      <span>imissu:(</span>
+      <span class="night-only">sleep well</span>
+      <span>mwah</span>
+      <span class="night-only">smorch</span>
+      <span>still here:)</span>
+      <span>hi cutie</span>
+    </div>
+  </div>
+  <script>
+      const hour = new Date().getHours();
+      const scene = document.querySelector('.scene');
+
+      const isDay = hour >= 6 && hour < 18;
+      scene.classList.add(isDay ? 'day' : 'night');
+
+      function animateCat(selector, frameTime) {
+        const frames = document.querySelectorAll(`${selector} img`);
+        let index = 0;
+
+        if (!frames.length) return;
+
+        frames[index].classList.add('active');
+
+        setInterval(() => {
+          frames[index].classList.remove('active');
+          index = (index + 1) % frames.length;
+          frames[index].classList.add('active');
+        }, frameTime);
+      }
+
+      if (isDay) {
+        // DAY: tail wiggle
+        animateCat('.cat-day', 300);
+      } else {
+        // NIGHT: breathing
+        animateCat('.cat-night', 500);
+      }
+
+      const textSpans = Array.from(
+        document.querySelectorAll('.corner-text span')
+      );
+
+      // filter based on day/night
+      const visibleTexts = textSpans.filter(span => {
+        if (scene.classList.contains('day')) {
+          return !span.classList.contains('night-only');
+        }
+        return true;
+      });
+
+      let textIndex = 0;
+
+      function cycleText() {
+        visibleTexts.forEach(s => s.classList.remove('active'));
+        visibleTexts[textIndex].classList.add('active');
+
+        textIndex = (textIndex + 1) % visibleTexts.length;
+      }
+
+      cycleText(); // show immediately
+      setInterval(cycleText, 15000); // change every 15s
+    </script>
+</body>
+</html>
