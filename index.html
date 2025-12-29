@@ -224,20 +224,29 @@
     /* CAT ZONE — foreground anchor */
     .cat-zone {
       position: absolute;
-      bottom: -12%;
+
+      /* viewport-grounded anchor */
+      bottom: -12vh;
+
       width: 140px;
       height: 260px;
+
       pointer-events: none;
       overflow: visible;
     }
 
+
     .cat-right {
-      left: 4%;
-      transform: translateX(90px);
-      bottom: -8%;
+      left: 6vw;
+
+      /* relative horizontal spacing from left cat */
+      transform: translateX(5vw);
+      bottom: -8vh;
     }
+
+
     .cat-left {
-      left: 4%;
+      left: 4vw;
     }
 
     .cat-right .stand-wrapper::after {
@@ -752,28 +761,28 @@
       CLOCK POSITIONS BY SCENE
     ========================= */
 
-    /* DAY FINDFIND*/
+    /* =========================
+      CLOCK POSITIONS (VIEWPORT)
+    ========================= */
+
+    /* DAY */
     .scene.day {
-      --clock-x: 1108px;
-      --clock-y: 525px;
+      --clock-x: 84vw;
+      --clock-y: 84vh;
     }
 
     /* EVENING */
     .scene.evening {
-      --clock-x: 1100px;
-      --clock-y: 525px;
+      --clock-x: 84vw;
+      --clock-y: 84vh;
     }
 
     /* NIGHT */
     .scene.night {
-      --clock-x: 1108px;
-      --clock-y: auto;
+      --clock-x: 84vw;
+      --clock-y: 84vh;
     }
 
-    .scene.night .clock {
-      top: auto;
-      bottom: 32px;
-    }
 
     /* =========================
       <3 HEARTS (FLUSTERED)
@@ -811,6 +820,15 @@
         transform: translate(28px, -48px) scale(1.1) rotate(10deg);
         opacity: 0;
       }
+    }
+
+    /* =========================
+      VIEWPORT-SAFE BED ANCHOR
+      ========================= */
+
+    .cat-bed-zone {
+      bottom: -22vh;   /* TEMP VALUE — you will tune this */
+      left: 8vw;
     }
 
   </style>
