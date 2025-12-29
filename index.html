@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Jersey+25&display=swap" rel="stylesheet">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Day Night Cat</title>
@@ -89,10 +90,6 @@
       opacity: 0;
     }
 
-    .scene.day .corner-text {
-      color: rgba(0, 0, 0, 0.6);
-    }
-
     .scene.day .night-only {
       display: none;
     }
@@ -133,9 +130,33 @@
 
     .day-bg { opacity: 0; }
     .night-bg { opacity: 0; }
+    .evening-bg { opacity: 0; }
 
     .scene.day .day-bg { opacity: 1; }
     .scene.night .night-bg { opacity: 1; }
+    .scene.evening .evening-bg { opacity: 1; }
+
+    /* hide by default */
+    .cat2-day,
+    .cat2-evening,
+    .cat2-night {
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* state visibility */
+    .scene.day .cat2-day {
+      visibility: visible;
+    }
+
+    .scene.evening .cat2-evening {
+      visibility: visible;
+    }
+
+    .scene.night .cat2-night {
+      visibility: visible;
+    }
+
 
 
     /* corner text */
@@ -144,7 +165,6 @@
       bottom: 24px;
       right: 24px;
       font-size: 14px;
-      color: rgba(255, 255, 255, 0.85);
       text-align: right;
       white-space: nowrap;
       z-index: 3;
@@ -152,6 +172,7 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       font-family: 'VT323', monospace;
+      color: rgba(0, 0, 0, 0.6); /* default (day) */
     }
 
     .corner-text span {
@@ -166,6 +187,23 @@
       opacity: 1;
     }
 
+    /* DAY — soft dark */
+    .scene.day .corner-text span {
+      color: rgba(0, 0, 0, 0.6);
+    }
+
+    /* EVENING — warm dusk */
+    .scene.evening .corner-text span {
+      color: rgba(245, 245, 245, 1);
+    }
+
+    /* NIGHT — force soft white on visible text */
+    .scene.night .corner-text span.active {
+      color: rgba(235, 240, 255, 0.9);
+    }
+
+
+
     /* text delays */
     .corner-text span:nth-child(1) { --i: 0; }
     .corner-text span:nth-child(2) { --i: 1; }
@@ -175,45 +213,152 @@
     .corner-text span:nth-child(6) { --i: 5; }
     .corner-text span:nth-child(7) { --i: 6; }
 
+    /* NIGHT — force soft white on ALL corner text */
+    .scene.night .corner-text span {
+      color: rgba(235, 240, 255, 0.9);
+    }
+
+
 
 
     /* CAT ZONE — foreground anchor */
     .cat-zone {
       position: absolute;
-      bottom: -8%;          /* pushes stand off-screen */
-      left: 4%;
-      width: 140px;         /* MUCH larger presence */
-      height: 260px;        /* tall enough for stand */
-      z-index: 2;
+      bottom: -12%;
+      width: 140px;
+      height: 260px;
       pointer-events: none;
+      overflow: visible;
     }
+
+    .cat-right {
+      left: 4%;
+      transform: translateX(90px);
+      bottom: -8%;
+    }
+    .cat-left {
+      left: 4%;
+    }
+
+    .cat-right .stand-wrapper::after {
+      height: 120px;
+    }
+    
+
     .cat-stand {
       position: absolute;
       bottom: 0;
       left: 50%;
-      transform: translateX(-50%);
-      width: 75px;          /* scale UP from original */
+      transform: translateX(-50%) scale(1.15);
+      width: 75px;
       height: auto;
     }
-    .cat-bed {
+
+    .cat-bed-zone {
+      bottom: -30%;
+      left: 4%;
+      z-index: 1;
+    }
+
+    .cat-bed-zone .cat-bed,
+    .cat-bed-zone .cat-stand {
+      transform: translateX(60px) scale(1.2);
+      transform-origin: bottom center;
+    }
+
+
+    .cat-bed-zone .cat-bed {
       position: absolute;
-      bottom: 70px;         /* adjust until it sits snug */
+      bottom: 170px;        /* ← adjust ONLY this number */
       left: 50%;
       transform: translateX(-50%);
-      width: 114px;         /* larger than stand */
-      height: auto;
+      width: 110px;
+      z-index: 3;
+    }
+
+    .cat-bed-zone .cat-stand {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%) scale(1.15);
+    }
+
+    /* lowest */
+    .cat-zone .cat-stand {
+      z-index: 1;
+    }
+
+    /* middle */
+    .cat-bed-zone {
+      z-index: 2;
+    }
+
+    /* top */
+    .cat-zone .cat-sprite {
+      z-index: 3;
+    } 
+
+
+    /* ensure right cat zone paints above bed zone */
+    .cat-zone.cat-right {
+      z-index: 2;
+    }
+    
+    .cat-bed-zone {
+      bottom: -22%;   /* was -30% */
+      left: 8%;
+    }
+
+    .cat-zone.cat-right {
+      z-index: 5;
+    }
+
+    .cat-bed-zone {
+      z-index: 2;
+    }
+
+    /* RIGHT STAND — always below bed */
+    .cat-stand-zone.cat-right-stand {
+      position: absolute;
+      bottom: -13%;
+      left: 4%;
+      transform: translateX(160px) scale(1.15);
+      transform-origin: bottom center;
+      z-index: 2;
+    }
+
+
+    /* BED — middle layer */
+    .cat-bed-zone {
+      z-index: 3;
+    }
+
+    /* RIGHT CAT — always above bed */
+    .cat-zone.cat-right {
+      z-index: 4;
     }
 
     /* CAT FRAME STACK */
     .cat-sprite {
       position: absolute;
-      bottom: 90px;          /* stays exactly where you tuned it */
+      bottom: 205px;
       left: 50%;
-      transform: translateX(-50%);
       width: 48px;
       height: 48px;
       pointer-events: none;
+      z-index: 3;
+
+      transform: translateX(-50%) scale(0.9);
+      transform-origin: bottom center;
     }
+
+
+    .cat-left .cat-sprite {
+      transform: translateX(-50%) scale(0.8);
+      transform-origin: bottom center;
+      bottom: 205px;   /* was 190px */
+    }
+
 
     /* individual frames */
     .cat-sprite img {
@@ -223,10 +368,6 @@
       height: auto;
       opacity: 0;
       image-rendering: pixelated;
-    }
-
-    .cat-day {
-      transform: translateX(-50%) translate(4px,-8px);
     }
 
 
@@ -251,9 +392,169 @@
     .cat-night img:nth-child(4) {
       transform: translate(3px, -2px);
     }
-    .cat-night {
-      transform: translateX(-50%) translate(2px,4px);
+
+    /* RIGHT CAT — DAY FRAME ALIGNMENT FIXES */
+
+    /* frame 1 */
+    .cat-right .cat2-day img:nth-child(1) {
+      transform: translate(1px, -12px);
     }
+
+    /* frame 2 */
+    .cat-right .cat2-day img:nth-child(2) {
+      transform: translate(-2px, -9px);
+    }
+
+    /* frame 3 */
+    .cat-right .cat2-day img:nth-child(3) {
+      transform: translate(1px, -12px);
+    }
+
+    /* frame 4 */
+    .cat-right .cat2-day img:nth-child(4) {
+      transform: translate(-2px, -12px);
+    }
+
+    /* RIGHT CAT — EVENING FRAME ALIGNMENT FIXES */
+
+    /* frame 1 */
+    .cat-right .cat2-evening img:nth-child(1) {
+      transform: translate(3px, -12px);
+    }
+
+    /* frame 2 */
+    .cat-right .cat2-evening img:nth-child(2) {
+      transform: translate(3px, -15px);
+    }
+
+    /* frame 3 */
+    .cat-right .cat2-evening img:nth-child(3) {
+      transform: translate(0px, -15px);
+    }
+
+    /* frame 4 */
+    .cat-right .cat2-evening img:nth-child(4) {
+      transform: translate(0px, -15px);
+    }
+
+
+    /* LEFT CAT — EVENING FRAME ALIGNMENT FIXES */
+
+    /* frame 1 */
+    .cat-left .cat-evening img:nth-child(1) {
+      transform: translate(2px, -5px);
+    }
+
+    /* frame 2 */
+    .cat-left .cat-evening img:nth-child(2) {
+      transform: translate(-1px, -2px);
+    }
+
+    /* frame 3 */
+    .cat-left .cat-evening img:nth-child(3) {
+      transform: translate(-1px, -2px);
+    }
+
+    /* frame 4 */
+    .cat-left .cat-evening img:nth-child(4) {
+      transform: translate(-1px, -5px);
+    }
+
+    /* LEFT CAT — EVENING SCALE BOOST */
+    .cat-left .cat-evening {
+      transform: translateX(-50%) scale(0.9);
+    }
+
+    /* RIGHT CAT — NIGHT (SLEEP) FRAME ALIGNMENT FIXES */
+
+    /* FRAME 1 — inhale (slightly up, very slight right) */
+    .cat-right .cat2-night img:nth-child(1) {
+      transform: translate(-32px, 133px);
+    }
+
+    /* FRAME 2 — peak inhale (highest point, centered) */
+    .cat-right .cat2-night img:nth-child(2) {
+      transform: translate(-32px, 133px);
+    }
+
+    /* FRAME 3 — exhale (down, tiny left correction) */
+    .cat-right .cat2-night img:nth-child(3) {
+      transform: translate(-35px, 130px);
+    }
+
+    /* FRAME 4 — rest (match frame 1 for smooth loop) */
+    .cat-right .cat2-night img:nth-child(4) {
+      transform: translate(-32px, 133px);
+    }
+
+    /* LEFT CAT — NIGHT SCALE BOOST (ISOLATED) */
+    .scene.night .cat-left .cat-night {
+      transform: translateX(-50%) scale(0.9);
+      transform-origin: bottom center;
+    }
+
+    /* LEFT CAT — NIGHT SNUGGLE SCALE */
+    .scene.night .cat-left .cat-night {
+      transform: translateX(-50%) scale(1.05);
+      transform-origin: bottom center;
+    }
+
+    /* RIGHT CAT — on top of left cat during night */
+    .scene.night .cat-zone.cat-right {
+      z-index: 6;
+    }
+
+    /* LEFT CAT — slightly below */
+    .scene.night .cat-zone.cat-left {
+      z-index: 5;
+    }
+
+
+
+    /* LEFT CAT — NIGHT (SLEEP) FRAME ALIGNMENT + DOWNWARD SETTLE */
+
+    /* FRAME 1 — inhale (slightly up, but grounded) */
+    .cat-left .cat-night img:nth-child(1) {
+      transform: translate(53px, 79px);
+    }
+
+    /* FRAME 2 — peak inhale (highest point, still grounded) */
+    .cat-left .cat-night img:nth-child(2) {
+      transform: translate(50px, 82px);
+    }
+
+    /* FRAME 3 — exhale (lowest point, feet fully planted) */
+    .cat-left .cat-night img:nth-child(3) {
+      transform: translate(53px, 82px);
+    }
+
+    /* FRAME 4 — rest (match frame 1 for loop smoothness) */
+    .cat-left .cat-night img:nth-child(4) {
+      transform: translate(53px, 79px);
+    }
+
+    /* STANDS — always behind cats */
+    .cat-zone .cat-stand {
+      z-index: 1;
+    }
+
+    /* CAT SPRITES — above stands */
+    .cat-zone .cat-sprite {
+      z-index: 4;
+    }
+
+    /* NIGHT — cats above bed */
+    .scene.night .cat-left .cat-night,
+    .scene.night .cat-right .cat2-night {
+      z-index: 6;
+    }
+
+    /* RIGHT CAT — NIGHT SMIDGE SCALE DOWN */
+    .scene.night .cat-right .cat2-night {
+      transform: translateX(-50%) translateX(-3px) scale(0.90);
+      transform-origin: bottom center;
+    }
+
 
 
     /* visible frame */
@@ -270,11 +571,24 @@
 
 
 
-    /* day vs night swap */
-    .scene.day .cat-day { opacity: 1; }
-    .scene.day .cat-night { opacity: 0; }
+    /* hide everything by default */
+    .cat-day,
+    .cat-evening,
+    .cat-night {
+      opacity: 0;
+    }
+    .cat-day img {
+      transform: translate(4px, -8px);
+    }
 
-    .scene.night .cat-day { opacity: 0; }
+
+    /* DAY */
+    .scene.day .cat-day { opacity: 1; }
+
+    /* EVENING */
+    .scene.evening .cat-evening { opacity: 1; }
+
+    /* NIGHT */
     .scene.night .cat-night { opacity: 1; }
 
 
@@ -297,6 +611,59 @@
       animation:
         driftFront 35s ease-in-out infinite alternate,
         cloudFloat 14s ease-in-out infinite;
+    }
+
+    .contrail {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: auto;
+      pointer-events: none;
+      opacity: 0.9;
+    }
+
+    /* ONLY animate contrail in evening */
+    .scene.evening .contrail {
+      animation: contrailDrift 240s linear infinite alternate;
+    }
+
+    /* Z CONTAINER */
+    .sleep-z-container {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10; /* above cats */
+    }
+
+    /* INDIVIDUAL Z */
+    .sleep-z {
+      position: absolute;
+      font-family: 'VT323', monospace;
+      font-size: 18px;
+      color: rgba(235, 240, 255, 0.85);
+      opacity: 0;
+      animation: floatZ 3.5s ease-out forwards;
+      image-rendering: pixelated;
+      white-space: nowrap;
+    }
+
+    .sleep-z {
+      text-shadow: 0 0 6px rgba(200, 220, 255, 0.8);
+    }
+
+    /* Z FLOAT ANIMATION */
+    @keyframes floatZ {
+      0% {
+        transform: translateY(0) translateX(0) scale(0.9);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.9;
+      }
+      100% {
+        transform: translateY(-40px) translateX(10px) scale(1.1);
+        opacity: 0;
+      }
     }
 
 
@@ -330,6 +697,121 @@
       50%      { transform: translateY(-2px); }
     }
 
+    @keyframes contrailDrift {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-4px); }
+    }
+
+    /* =========================
+      PIXEL CLOCK
+    ========================= */
+
+    .clock {
+      position: absolute;
+
+      /* position controlled via variables */
+      left: var(--clock-x, 32px);
+      top: var(--clock-y, 32px);
+
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      z-index: 20;
+
+      font-family: 'VT323', monospace;
+      color: rgba(0, 0, 0, 0.65);
+
+      image-rendering: pixelated;
+
+        transform: scale(1.1);
+        transform-origin: top left;
+    }
+
+
+    .clock-time {
+      font-size: 64px;
+      line-height: 1;
+    }
+
+    .clock-ampm {
+      font-size: 28px;
+      line-height: 1;
+      opacity: 0.85;
+    }
+
+    /* Scene color overrides */
+    .scene.evening .clock {
+      color: rgba(235, 240, 255, 0.9);
+    }
+
+    .scene.night .clock {
+      color: rgba(235, 240, 255, 0.9);
+    }
+
+    /* =========================
+      CLOCK POSITIONS BY SCENE
+    ========================= */
+
+    /* DAY FINDFIND*/
+    .scene.day {
+      --clock-x: 1108px;
+      --clock-y: 525px;
+    }
+
+    /* EVENING */
+    .scene.evening {
+      --clock-x: 1100px;
+      --clock-y: 525px;
+    }
+
+    /* NIGHT */
+    .scene.night {
+      --clock-x: 1108px;
+      --clock-y: auto;
+    }
+
+    .scene.night .clock {
+      top: auto;
+      bottom: 32px;
+    }
+
+    /* =========================
+      <3 HEARTS (FLUSTERED)
+    ========================= */
+
+    /* Heart container uses same layer as Zs */
+    .heart {
+      position: absolute;
+      font-family: 'Jersey 25', monospace;
+      font-size: 15px;
+      color: rgba(245, 245, 245, 0.9);
+      pointer-events: none;
+      white-space: nowrap;
+
+      image-rendering: pixelated;
+
+      opacity: 0;
+      animation: floatHeart 2.2s ease-out forwards;
+    }
+
+
+    /* More aggressive than Zs */
+    @keyframes floatHeart {
+      0% {
+        transform: translate(0, 0) scale(0.85) rotate(-5deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      40% {
+        transform: translate(12px, -18px) scale(1.25) rotate(6deg);
+      }
+      100% {
+        transform: translate(28px, -48px) scale(1.1) rotate(10deg);
+        opacity: 0;
+      }
+    }
 
   </style>
 </head>
@@ -354,92 +836,370 @@
       <img src="assets/night/moon.png" class="moon-layer">
     </div>
 
+    <!-- EVENING BACKGROUND -->
+    <div class="bg evening-bg">
+      <img src="assets/evening/sky.png" class="bg-sky">
+
+      <img src="assets/evening/clouds-back.png" class="clouds back">
+
+      <img src="assets/evening/contrail.png" class="contrail">
+
+      <img src="assets/evening/clouds-mid.png" class="clouds mid">
+
+      <img src="assets/evening/clouds-front.png" class="clouds front">
+    </div>
+
+        <!-- Cycling text -->
+        <div class="corner-text">
+          <span class="night-only">goodnight baby :)</span>
+          <span>imissu:(</span>
+          <span class="night-only">sleep well</span>
+          <span>mwah</span>
+          <span class="night-only">smorch</span>
+          <span>still here:)</span>
+          <span>hi cutie</span>
+          <!-- NEW MESSAGES (edit these freely) -->
+          <span>thinking of you</span>
+          <span class="night-only">sweet dreams</span>
+          <span>so pretty</span>
+          <span>OMWAH</span>
+          <span class="night-only">rest well princess</span>
+          <span>good job</span>
+        </div>
+
+
     <!-- Cat Zone -->
-    <div class="cat-zone">
-      <img src="assets/cat/stand.png" class="cat-stand" alt="">
-      <img src="assets/cat/bed.png" class="cat-bed" alt="">
+
+    <div class="cat-zone cat-left">
+      <div class="stand-wrapper">
+        <img src="assets/cat/stand-left.png" class="cat-stand">
+      </div>
 
       <div class="cat-sprite cat-day">
-      <img src="assets/cat/day/idle-1.png">
-      <img src="assets/cat/day/idle-2.png">
-      <img src="assets/cat/day/idle-3.png">
-      <img src="assets/cat/day/idle-4.png">
+        <img src="assets/cat/left/day/idle-1.png">
+        <img src="assets/cat/left/day/idle-2.png">
+        <img src="assets/cat/left/day/idle-3.png">
+        <img src="assets/cat/left/day/idle-4.png">
+      </div>
+
+      <div class="cat-sprite cat-evening">
+        <img src="assets/cat/left/evening/eidle-1.png">
+        <img src="assets/cat/left/evening/eidle-2.png">
+        <img src="assets/cat/left/evening/eidle-3.png">
+        <img src="assets/cat/left/evening/eidle-4.png">
+      </div>
+
+      <div class="cat-sprite cat-night">
+        <img src="assets/cat/left/night/sleep-1.png">
+        <img src="assets/cat/left/night/sleep-2.png">
+        <img src="assets/cat/left/night/sleep-3.png">
+        <img src="assets/cat/left/night/sleep-4.png">
+      </div>
     </div>
 
-    <div class="cat-sprite cat-night">
-      <img src="assets/cat/night/sleep-1.png">
-      <img src="assets/cat/night/sleep-2.png">
-      <img src="assets/cat/night/sleep-3.png">
-      <img src="assets/cat/night/sleep-4.png">
+
+    <!-- Right Cat (sprite only, above bed) -->
+    <div class="cat-zone cat-right">
+      <div class="cat-sprite cat2-day">
+        <img src="assets/cat/right/day/idle-1.png">
+        <img src="assets/cat/right/day/idle-2.png">
+        <img src="assets/cat/right/day/idle-3.png">
+        <img src="assets/cat/right/day/idle-4.png">
+      </div>
+
+      <div class="cat-sprite cat2-evening">
+        <img src="assets/cat/right/evening/eidle-1.png">
+        <img src="assets/cat/right/evening/eidle-2.png">
+        <img src="assets/cat/right/evening/eidle-3.png">
+        <img src="assets/cat/right/evening/eidle-4.png">
+      </div>
+
+      <div class="cat-sprite cat2-night">
+        <img src="assets/cat/right/night/sleep-1.png">
+        <img src="assets/cat/right/night/sleep-2.png">
+        <img src="assets/cat/right/night/sleep-3.png">
+        <img src="assets/cat/right/night/sleep-4.png">
+      </div>
     </div>
+
+    <!-- Right Stand (below bed) -->
+    <div class="cat-stand-zone cat-right-stand">
+      <img src="assets/cat/stand-right.png" class="cat-stand">
+    </div>
+
+    <!-- Shared Bed Cat Zone -->
+    <div class="cat-zone cat-bed-zone">
+      <img src="assets/cat/bed-stand.png" class="cat-stand">
+      <img src="assets/cat/bed.png" class="cat-bed">
+    </div>
+
+    <!-- Floating Zs -->
+    <div class="sleep-z-container"></div>
+
+
+    <!-- Clock -->
+    <div class="clock">
+      <span class="clock-time">12:34</span>
+      <span class="clock-ampm">AM</span>
+    </div>
+
 
     </div>
 
-
-    <!-- Cycling text -->
-    <div class="corner-text">
-      <span class="night-only">goodnight baby :)</span>
-      <span>imissu:(</span>
-      <span class="night-only">sleep well</span>
-      <span>mwah</span>
-      <span class="night-only">smorch</span>
-      <span>still here:)</span>
-      <span>hi cutie</span>
-    </div>
-  </div>
   <script>
-      const hour = new Date().getHours();
-      const scene = document.querySelector('.scene');
+    const scene = document.querySelector('.scene');
 
-      const isDay = hour >= 6 && hour < 18;
-      scene.classList.add(isDay ? 'day' : 'night');
+    let currentState = null;
+    let cat1Interval = null;
+    let cat2Interval = null;
 
-      function animateCat(selector, frameTime) {
-        const frames = document.querySelectorAll(`${selector} img`);
-        let index = 0;
+    function getSceneState() {
+      const now = new Date();
+      const t = now.getHours() + now.getMinutes() / 60;
 
-        if (!frames.length) return;
+      if (t >= 6 && t < 17.5) return 'day';
+      if (t >= 17.5 && t < 18.5) return 'evening';
+      return 'night';
+    }
 
+    function animateCat(selector, frameTime) {
+      const frames = document.querySelectorAll(`${selector} img`);
+      let index = 0;
+
+      if (!frames.length) return null;
+
+      frames.forEach(f => f.classList.remove('active'));
+      frames[0].classList.add('active');
+
+      return setInterval(() => {
+        frames[index].classList.remove('active');
+        index = (index + 1) % frames.length;
         frames[index].classList.add('active');
+      }, frameTime);
+    }
 
-        setInterval(() => {
-          frames[index].classList.remove('active');
-          index = (index + 1) % frames.length;
-          frames[index].classList.add('active');
-        }, frameTime);
-      }
+    function applyScene(force = false) {
+      const nextState = getSceneState();
 
-      if (isDay) {
-        // DAY: tail wiggle
-        animateCat('.cat-day', 300);
+      // do nothing if scene didn't change
+      if (!force && nextState === currentState) return;
+
+      currentState = nextState;
+
+      scene.classList.remove('day', 'evening', 'night');
+      scene.classList.add(currentState);
+
+      if (cat1Interval) clearInterval(cat1Interval);
+      if (cat2Interval) clearInterval(cat2Interval);
+
+      if (currentState === 'night') {
+        cat1Interval = animateCat('.cat-night', 500);
+        cat2Interval = animateCat('.cat2-night', 500);
+      } else if (currentState === 'evening') {
+        cat1Interval = animateCat('.cat-evening', 400);
+        cat2Interval = animateCat('.cat2-evening', 400);
       } else {
-        // NIGHT: breathing
-        animateCat('.cat-night', 500);
+        cat1Interval = animateCat('.cat-day', 300);
+        cat2Interval = animateCat('.cat2-day', 300);
+      }
+    }
+
+    // initial sync
+    applyScene(true);
+
+    // check every minute (24/7 safe)
+    setInterval(() => {
+      applyScene();
+    }, 60 * 1000);
+
+    // resync after sleep / screen off
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        applyScene(true);
+      }
+    });
+
+
+
+    const textSpans = document.querySelectorAll('.corner-text span');
+    let textIndex = 0;
+
+    function cycleText() {
+      textSpans.forEach(s => s.classList.remove('active'));
+
+      // skip night-only text during day
+      let tries = 0;
+      while (
+        textSpans[textIndex].classList.contains('night-only') &&
+        !scene.classList.contains('night') &&
+        tries < textSpans.length
+      ) {
+        textIndex = (textIndex + 1) % textSpans.length;
+        tries++;
       }
 
-      const textSpans = Array.from(
-        document.querySelectorAll('.corner-text span')
+      textSpans[textIndex].classList.add('active');
+      textIndex = (textIndex + 1) % textSpans.length;
+    }
+
+    cycleText();
+    setInterval(cycleText, 3500);
+
+    const sceneRect = scene.getBoundingClientRect();
+    const zContainer = document.querySelector('.sleep-z-container');
+
+    function spawnZ(x, y) {
+      const z = document.createElement('div');
+      z.className = 'sleep-z';
+
+      // randomize Z style
+      z.textContent = Math.random() > 0.5 ? 'Z' : 'z';
+      z.style.left = `${x + Math.random() * 6 - 3}px`;
+      z.style.top = `${y}px`;
+      z.style.fontSize = `${16 + Math.random() * 6}px`;
+
+      zContainer.appendChild(z);
+
+      // cleanup
+      setTimeout(() => {
+        z.remove();
+      }, 3500);
+    }
+
+    function sleepZLoop() {
+    if (!scene.classList.contains('night')) return;
+
+    const bed = getBedAnchor();
+    if (!bed) return;
+
+    // LEFT CAT Z (slightly left)
+    spawnZ(
+      bed.x - 14 + Math.random() * 4,
+      bed.y
+    );
+
+    // RIGHT CAT Z (slightly right, delayed)
+    setTimeout(() => {
+      spawnZ(
+        bed.x + 14 + Math.random() * 4,
+        bed.y + 2
       );
+    }, 600);
+  }
 
-      // filter based on day/night
-      const visibleTexts = textSpans.filter(span => {
-        if (scene.classList.contains('day')) {
-          return !span.classList.contains('night-only');
-        }
-        return true;
-      });
 
-      let textIndex = 0;
+    function getBedAnchor() {
+      const bed = document.querySelector('.cat-bed-zone .cat-bed');
+      if (!bed) return null;
 
-      function cycleText() {
-        visibleTexts.forEach(s => s.classList.remove('active'));
-        visibleTexts[textIndex].classList.add('active');
+      const bedRect = bed.getBoundingClientRect();
+      const sceneRect = scene.getBoundingClientRect();
 
-        textIndex = (textIndex + 1) % visibleTexts.length;
+      return {
+        x: bedRect.left - sceneRect.left + bedRect.width / 2,
+        y: bedRect.top - sceneRect.top + bedRect.height * 0.25
+      };
+    }
+
+
+    // randomized interval loop
+    setInterval(() => {
+      if (scene.classList.contains('night')) {
+        sleepZLoop();
+      }
+    }, 2800 + Math.random() * 1200);
+
+    /* =========================
+      <3 HEART LOGIC
+    ========================= */
+
+    function spawnHeart(x, y) {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.textContent = '<3';
+
+      // slight randomness for flustered feel
+      heart.style.left = `${x + Math.random() * 8 - 4}px`;
+      heart.style.top = `${y + Math.random() * 6}px`;
+      heart.style.fontSize = `${18 + Math.random() * 6}px`;
+
+      zContainer.appendChild(heart);
+
+      // cleanup
+      setTimeout(() => {
+        heart.remove();
+      }, 2300);
+    }
+
+    function heartLoop() {
+      // DAY → left cat
+      if (scene.classList.contains('day')) {
+        const leftCat = document.querySelector('.cat-zone.cat-left');
+        if (!leftCat) return;
+
+        const rect = leftCat.getBoundingClientRect();
+        const sceneRect = scene.getBoundingClientRect();
+
+        spawnHeart(
+          rect.left - sceneRect.left + rect.width * 0.6,
+          rect.top - sceneRect.top + rect.height * 0.01
+        );
       }
 
-      cycleText(); // show immediately
-      setInterval(cycleText, 15000); // change every 15s
+      // EVENING → right cat
+      if (scene.classList.contains('evening')) {
+        const rightCat = document.querySelector('.cat-zone.cat-right');
+        if (!rightCat) return;
+
+        const rect = rightCat.getBoundingClientRect();
+        const sceneRect = scene.getBoundingClientRect();
+
+        spawnHeart(
+          rect.left - sceneRect.left + rect.width * 0.50,
+          rect.top - sceneRect.top + rect.height * 0.01
+        );
+      }
+    }
+
+    /* staggered flustered rhythm */
+    setInterval(() => {
+      if (scene.classList.contains('day') || scene.classList.contains('evening')) {
+        heartLoop();
+      }
+    }, 1200 + Math.random() * 800);
+
+
+    /* =========================
+      CLOCK LOGIC (12-hour)
+    ========================= */
+
+    const clockTimeEl = document.querySelector('.clock-time');
+    const clockAmPmEl = document.querySelector('.clock-ampm');
+
+    function updateClock() {
+      const now = new Date();
+
+      let hours = now.getHours();
+      const minutes = now.getMinutes();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+
+      hours = hours % 12;
+      if (hours === 0) hours = 12;
+
+      const paddedMinutes = minutes.toString().padStart(2, '0');
+
+      clockTimeEl.textContent = `${hours}:${paddedMinutes}`;
+      clockAmPmEl.textContent = ampm;
+    }
+
+    // initial draw
+    updateClock();
+
+    // update every second (cheap & smooth)
+    setInterval(updateClock, 1000);
+
+
+
     </script>
 </body>
 </html>
