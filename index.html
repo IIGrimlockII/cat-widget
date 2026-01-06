@@ -43,73 +43,6 @@
       background: linear-gradient(#0b1d3a, #000000);
     }
 
-    .sun {
-      position: absolute;
-      width: 80px;
-      height: 80px;
-      background: #ffd93b;
-      border-radius: 50%;
-      left: 10%;
-      top: 20%;
-    }
-
-    .moon {
-      position: absolute;
-      width: 60px;
-      height: 60px;
-      background: #f5f3ce;
-      border-radius: 50%;
-      right: 15%;
-      top: 25%;
-    }
-
-    .stars {
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(white 1px, transparent 1px);
-      background-size: 40px 40px;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .sun,
-    .moon,
-    .stars {
-      transition: opacity 2s ease;
-    }
-
-
-
-    /* state-based sky visibility */
-    .scene.day .sun {
-      opacity: 1;
-    }
-
-    .scene.day .moon,
-    .scene.day .stars {
-      opacity: 0;
-    }
-
-    .scene.day .night-only {
-      display: none;
-    }
-
-    .scene.night .sun {
-      opacity: 0;
-    }
-
-    .scene.night .moon,
-    .scene.night .stars {
-      opacity: 1;
-    }
-
-    .scene.night .corner-text {
-      color: rgba(255, 255, 255, 0.85);
-    }
-
-    .scene.night .night-only {
-      display: inline;
-    }
 
     .bg {
       position: absolute;
@@ -249,11 +182,6 @@
       left: 4vw;
     }
 
-    .cat-right .stand-wrapper::after {
-      height: 120px;
-    }
-    
-
     .cat-stand {
       position: absolute;
       bottom: 0;
@@ -263,11 +191,6 @@
       height: auto;
     }
 
-    .cat-bed-zone {
-      bottom: -30%;
-      left: 4%;
-      z-index: 1;
-    }
 
     .cat-bed-zone .cat-bed,
     .cat-bed-zone .cat-stand {
@@ -308,22 +231,9 @@
     } 
 
 
-    /* ensure right cat zone paints above bed zone */
-    .cat-zone.cat-right {
-      z-index: 2;
-    }
-    
-    .cat-bed-zone {
-      bottom: -22%;   /* was -30% */
-      left: 8%;
-    }
 
     .cat-zone.cat-right {
       z-index: 5;
-    }
-
-    .cat-bed-zone {
-      z-index: 2;
     }
 
     /* RIGHT STAND — always below bed */
@@ -672,16 +582,6 @@
       100% {
         transform: translateY(-40px) translateX(10px) scale(1.1);
         opacity: 0;
-      }
-    }
-
-
-    @keyframes breathe {
-      0%, 100% {
-        transform: translateX(-50%) translateY(0) scale(1);
-      }
-      50% {
-        transform: translateX(-50%) translateY(-1px) scale(1.03);
       }
     }
 
