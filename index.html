@@ -716,11 +716,9 @@
     ========================= */
 
     .clock {
-      position: absolute;
-
-      /* position controlled via variables */
-      left: var(--clock-x, 32px);
-      top: var(--clock-y, 32px);
+      position: fixed;        /* 🔒 viewport-locked */
+      right: 32px;
+      bottom: 32px;
 
       display: flex;
       align-items: baseline;
@@ -732,9 +730,10 @@
 
       image-rendering: pixelated;
 
-        transform: scale(1.1);
-        transform-origin: top left;
+      transform: scale(1.1);
+      transform-origin: bottom right;
     }
+
 
 
     .clock-time {
@@ -761,27 +760,6 @@
       CLOCK POSITIONS BY SCENE
     ========================= */
 
-    /* =========================
-      CLOCK POSITIONS (VIEWPORT)
-    ========================= */
-
-    /* DAY */
-    .scene.day {
-      --clock-x: 84vw;
-      --clock-y: 84vh;
-    }
-
-    /* EVENING */
-    .scene.evening {
-      --clock-x: 84vw;
-      --clock-y: 84vh;
-    }
-
-    /* NIGHT */
-    .scene.night {
-      --clock-x: 84vw;
-      --clock-y: 84vh;
-    }
 
 
     /* =========================
