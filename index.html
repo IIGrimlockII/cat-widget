@@ -157,30 +157,38 @@
     /* CAT ZONE — foreground anchor */
     .cat-zone {
       position: absolute;
-
-      /* viewport-grounded anchor */
-      bottom: -12vh;
-
+      bottom: 0;
       width: 140px;
       height: 260px;
-
-      pointer-events: none;
-      overflow: visible;
     }
 
 
-    .cat-right {
-      left: 6vw;
+    /* RIGHT CAT GROUP — single anchor */
+    .right-cat-group {
+      position: absolute;
 
-      /* relative horizontal spacing from left cat */
-      transform: translateX(5vw);
-      bottom: -8vh;
+      /* STATIC VALUES — NO vh / vw / % */
+      left: 111px;
+      bottom: -20px;
+
+      width: 260px;
+      height: 260px;
+
+      pointer-events: none;
+    }
+
+
+
+    .cat-right {
+      position: absolute;
     }
 
 
     .cat-left {
-      left: 4vw;
+      left: 55px;
+      bottom: -75px;
     }
+
 
     .cat-stand {
       position: absolute;
@@ -189,13 +197,6 @@
       transform: translateX(-50%) scale(1.15);
       width: 75px;
       height: auto;
-    }
-
-
-    .cat-bed-zone .cat-bed,
-    .cat-bed-zone .cat-stand {
-      transform: translateX(60px) scale(1.2);
-      transform-origin: bottom center;
     }
 
 
@@ -239,12 +240,12 @@
     /* RIGHT STAND — always below bed */
     .cat-stand-zone.cat-right-stand {
       position: absolute;
-      bottom: -13%;
-      left: 4%;
-      transform: translateX(160px) scale(1.15);
-      transform-origin: bottom center;
-      z-index: 2;
+      left: 103px;
+      bottom: -60px;
+      transform: scale(1.15);
+      z-index: 1;
     }
+
 
 
     /* BED — middle layer */
@@ -254,6 +255,8 @@
 
     /* RIGHT CAT — always above bed */
     .cat-zone.cat-right {
+      left: 33px;   /* ⬅️ cat’s horizontal position */
+      bottom: -30px;  /* ⬆️ cat’s height above ground */
       z-index: 4;
     }
 
@@ -617,7 +620,7 @@
 
     .clock {
       position: fixed;        /* 🔒 viewport-locked */
-      right: 32px;
+      right: 26px;
       bottom: 32px;
 
       display: flex;
@@ -700,14 +703,12 @@
       }
     }
 
-    /* =========================
-      VIEWPORT-SAFE BED ANCHOR
-      ========================= */
-
     .cat-bed-zone {
-      bottom: -22vh;   /* TEMP VALUE — you will tune this */
-      left: 8vw;
+      position: absolute;
+      left: -5px;
+      bottom: -120px;
     }
+
 
   </style>
 </head>
@@ -793,41 +794,44 @@
       </div>
     </div>
 
+    <!-- RIGHT CAT GROUP (container) -->
+    <div class="right-cat-group">
 
-    <!-- Right Cat (sprite only, above bed) -->
-    <div class="cat-zone cat-right">
-      <div class="cat-sprite cat2-day">
-        <img src="assets/cat/right/day/idle-1.png">
-        <img src="assets/cat/right/day/idle-2.png">
-        <img src="assets/cat/right/day/idle-3.png">
-        <img src="assets/cat/right/day/idle-4.png">
+      <!-- Bed + bed stand -->
+      <div class="cat-zone cat-bed-zone">
+        <img src="assets/cat/bed-stand.png" class="cat-stand">
+        <img src="assets/cat/bed.png" class="cat-bed">
       </div>
 
-      <div class="cat-sprite cat2-evening">
-        <img src="assets/cat/right/evening/eidle-1.png">
-        <img src="assets/cat/right/evening/eidle-2.png">
-        <img src="assets/cat/right/evening/eidle-3.png">
-        <img src="assets/cat/right/evening/eidle-4.png">
+      <!-- Right stand -->
+      <div class="cat-stand-zone cat-right-stand">
+        <img src="assets/cat/stand-right.png" class="cat-stand">
       </div>
 
-      <div class="cat-sprite cat2-night">
-        <img src="assets/cat/right/night/sleep-1.png">
-        <img src="assets/cat/right/night/sleep-2.png">
-        <img src="assets/cat/right/night/sleep-3.png">
-        <img src="assets/cat/right/night/sleep-4.png">
+      <!-- Right cat -->
+      <div class="cat-zone cat-right">
+        <div class="cat-sprite cat2-day">
+          <img src="assets/cat/right/day/idle-1.png">
+          <img src="assets/cat/right/day/idle-2.png">
+          <img src="assets/cat/right/day/idle-3.png">
+          <img src="assets/cat/right/day/idle-4.png">
+        </div>
+        <div class="cat-sprite cat2-evening">
+          <img src="assets/cat/right/evening/eidle-1.png">
+          <img src="assets/cat/right/evening/eidle-2.png">
+          <img src="assets/cat/right/evening/eidle-3.png">
+          <img src="assets/cat/right/evening/eidle-4.png">
+        </div>
+        <div class="cat-sprite cat2-night">
+          <img src="assets/cat/right/night/sleep-1.png">
+          <img src="assets/cat/right/night/sleep-2.png">
+          <img src="assets/cat/right/night/sleep-3.png">
+          <img src="assets/cat/right/night/sleep-4.png">
+        </div>
       </div>
+
     </div>
 
-    <!-- Right Stand (below bed) -->
-    <div class="cat-stand-zone cat-right-stand">
-      <img src="assets/cat/stand-right.png" class="cat-stand">
-    </div>
-
-    <!-- Shared Bed Cat Zone -->
-    <div class="cat-zone cat-bed-zone">
-      <img src="assets/cat/bed-stand.png" class="cat-stand">
-      <img src="assets/cat/bed.png" class="cat-bed">
-    </div>
 
     <!-- Floating Zs -->
     <div class="sleep-z-container"></div>
