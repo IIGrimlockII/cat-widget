@@ -660,8 +660,34 @@
     }
 
     /* =========================
-      CLOCK POSITIONS BY SCENE
+      PERSISTENT CORNER HEART
     ========================= */
+
+    .corner-heart {
+      position: fixed;
+      top: 22px;
+      right: 16px;
+
+      font-family: 'VT323', monospace;
+      font-size: 22px;
+      letter-spacing: 1px;
+      opacity: 0.85;
+
+      color: rgba(0, 0, 0, 0.6); /* day default */
+      z-index: 20;
+
+      image-rendering: pixelated;
+      user-select: none;
+    }
+
+    /* Evening & night — soft white */
+    .scene.evening .corner-heart,
+    .scene.night .corner-heart {
+      color: rgba(235, 240, 255, 0.9);
+    }
+    .scene.night .corner-heart {
+      text-shadow: 0 0 6px rgba(200, 220, 255, 0.6);
+    }
 
 
 
@@ -755,13 +781,22 @@
           <span class="night-only">smorch</span>
           <span>still here:)</span>
           <span>hi cutie</span>
-          <!-- NEW MESSAGES (edit these freely) -->
           <span>thinking of you</span>
           <span class="night-only">sweet dreams</span>
           <span>so pretty</span>
           <span>OMWAH</span>
           <span class="night-only">rest well princess</span>
           <span>good job</span>
+          <span>love you</span>
+          <span>literally the best</span>
+          <span>cutu</span>
+          <span>im all yours</span>
+          <span>mine:></span>
+          <span>bigg mwah</span>
+          <span>u da real art</span>
+          <span>my chaat masala:)</span>
+          <span>you're the best</span>
+          <span>still here</span>
         </div>
 
 
@@ -843,6 +878,9 @@
       <span class="clock-ampm">AM</span>
     </div>
 
+    <!-- Persistent corner heart -->
+    <div class="corner-heart">&lt;3 t</div>
+
 
     </div>
 
@@ -921,29 +959,46 @@
 
 
 
-    const textSpans = document.querySelectorAll('.corner-text span');
-    let textIndex = 0;
+    const textSpans = Array.from(document.querySelectorAll('.corner-text span'));
+    let lastText = null;
 
     function cycleText() {
+      // remove current
       textSpans.forEach(s => s.classList.remove('active'));
 
-      // skip night-only text during day
-      let tries = 0;
-      while (
-        textSpans[textIndex].classList.contains('night-only') &&
-        !scene.classList.contains('night') &&
-        tries < textSpans.length
-      ) {
-        textIndex = (textIndex + 1) % textSpans.length;
-        tries++;
-      }
+      // filter valid messages based on scene
+      const validTexts = textSpans.filter(span => {
+        if (span.classList.contains('night-only')) {
+          return scene.classList.contains('night');
+        }
+        return true;
+      });
 
-      textSpans[textIndex].classList.add('active');
-      textIndex = (textIndex + 1) % textSpans.length;
+      if (!validTexts.length) return;
+
+      let next;
+      do {
+        next = validTexts[Math.floor(Math.random() * validTexts.length)];
+      } while (next === lastText && validTexts.length > 1);
+
+      next.classList.add('active');
+      lastText = next;
+    }
+
+    // initial
+    cycleText();
+    function scheduleNextText() {
+      const delay = 60_000 + Math.random() * 30_000; // 80–110s
+      setTimeout(() => {
+        cycleText();
+        scheduleNextText();
+      }, delay);
     }
 
     cycleText();
-    setInterval(cycleText, 3500);
+    scheduleNextText();
+
+
 
     const sceneRect = scene.getBoundingClientRect();
     const zContainer = document.querySelector('.sleep-z-container');
