@@ -60,14 +60,15 @@
       height: 100%;
       object-fit: cover;
     }
+    .bg {
+      opacity: 0;
+      transition: opacity 2.5s ease;
+    }
+
 
     .day-bg { opacity: 0; }
     .night-bg { opacity: 0; }
     .evening-bg { opacity: 0; }
-
-    .scene.day .day-bg { opacity: 1; }
-    .scene.night .night-bg { opacity: 1; }
-    .scene.evening .evening-bg { opacity: 1; }
 
     /* hide by default */
     .cat2-day,
@@ -742,35 +743,52 @@
 <body>
   <div class="scene">
 
-    <!-- DAY BACKGROUND -->
-    <div class="bg day-bg">
-      <img src="assets/day/sky.png" class="bg-sky">
-      <img src="assets/day/clouds-back.png" class="clouds back">
-      <img src="assets/day/clouds-mid.png" class="clouds mid">
-      <img src="assets/day/clouds-front.png" class="clouds front">
-      <img src="assets/day/sun.png" class="sun-layer">
-    </div>
+    <!-- DAY BACKGROUNDS -->
+      <div class="bg day-bg">
+        <img src="assets/day/sky.png" class="bg-sky">
+        <img src="assets/day/clouds-back.png" class="clouds back">
+        <img src="assets/day/clouds-mid.png" class="clouds mid">
+        <img src="assets/day/clouds-front.png" class="clouds front">
+        <img src="assets/day/sun.png" class="sun-layer">
+      </div>
 
-    <!-- NIGHT BACKGROUND -->
-    <div class="bg night-bg">
-      <img src="assets/night/sky.png" class="bg-sky">
-      <img src="assets/night/clouds-back.png" class="clouds back">
-      <img src="assets/night/clouds-front.png" class="clouds front">
-      <img src="assets/night/moon.png" class="moon-layer">
-    </div>
+      <div class="bg day-bg">
+        <img src="assets/day2/sky.png" class="bg-sky">
+        <img src="assets/day2/clouds-back.png" class="clouds back">
+        <img src="assets/day2/clouds-mid.png" class="clouds mid">
+        <img src="assets/day2/clouds-front.png" class="clouds front">
+      </div>
 
-    <!-- EVENING BACKGROUND -->
-    <div class="bg evening-bg">
-      <img src="assets/evening/sky.png" class="bg-sky">
+      <!-- EVENING BACKGROUNDS -->
+      <div class="bg evening-bg">
+        <img src="assets/evening/sky.png" class="bg-sky">
+        <img src="assets/evening/clouds-back.png" class="clouds back">
+        <img src="assets/evening/clouds-mid.png" class="clouds mid">
+        <img src="assets/evening/clouds-front.png" class="clouds front">
+        <img src="assets/evening/contrail.png" class="contrail">
+      </div>
 
-      <img src="assets/evening/clouds-back.png" class="clouds back">
+      <div class="bg evening-bg">
+        <img src="assets/evening2/sky.png" class="bg-sky">
+        <img src="assets/evening2/clouds-back.png" class="clouds back">
+        <img src="assets/evening2/clouds-front.png" class="clouds front">
+      </div>
 
-      <img src="assets/evening/contrail.png" class="contrail">
+      <!-- NIGHT BACKGROUNDS -->
+      <div class="bg night-bg">
+        <img src="assets/night/sky.png" class="bg-sky">
+        <img src="assets/night/clouds-back.png" class="clouds back">
+        <img src="assets/night/clouds-front.png" class="clouds front">
+        <img src="assets/night/moon.png" class="moon-layer">
+      </div>
 
-      <img src="assets/evening/clouds-mid.png" class="clouds mid">
+      <div class="bg night-bg">
+        <img src="assets/night2/sky.png" class="bg-sky">
+        <img src="assets/night2/clouds-back.png" class="clouds back">
+        <img src="assets/night2/clouds-front.png" class="clouds front">
+        <img src="assets/night2/moon.png" class="moon-layer">
+      </div>
 
-      <img src="assets/evening/clouds-front.png" class="clouds front">
-    </div>
 
         <!-- Cycling text -->
         <div class="corner-text">
@@ -887,6 +905,38 @@
   <script>
     const scene = document.querySelector('.scene');
 
+    const BG_KEY = 'daily-bg-choice';
+
+    function todayKey() {
+      const d = new Date();
+      return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    }
+
+    function getDailyBG() {
+      const today = todayKey();
+      const saved = JSON.parse(localStorage.getItem(BG_KEY) || '{}');
+
+      if (saved.date === today) return saved;
+
+      const pick = selector => {
+        const list = document.querySelectorAll(selector);
+        return list.length ? Math.floor(Math.random() * list.length) : 0;
+      };
+
+      const choice = {
+        date: today,
+        day: pick('.day-bg'),
+        evening: pick('.evening-bg'),
+        night: pick('.night-bg')
+      };
+
+      localStorage.setItem(BG_KEY, JSON.stringify(choice));
+      return choice;
+    }
+
+    const dailyBG = getDailyBG();
+
+
     let currentState = null;
     let cat1Interval = null;
     let cat2Interval = null;
@@ -926,6 +976,31 @@
 
       scene.classList.remove('day', 'evening', 'night');
       scene.classList.add(currentState);
+      document.querySelectorAll('.day-bg, .evening-bg, .night-bg')
+        .forEach(bg => bg.style.opacity = 0);
+
+      let list = [];
+      let index = 0;
+
+      if (currentState === 'day') {
+        list = document.querySelectorAll('.day-bg');
+        index = dailyBG.day;
+      }
+
+      if (currentState === 'evening') {
+        list = document.querySelectorAll('.evening-bg');
+        index = dailyBG.evening;
+      }
+
+      if (currentState === 'night') {
+        list = document.querySelectorAll('.night-bg');
+        index = dailyBG.night;
+      }
+
+      if (list[index]) {
+        list[index].style.opacity = 1;
+      }
+
 
       if (cat1Interval) clearInterval(cat1Interval);
       if (cat2Interval) clearInterval(cat2Interval);
