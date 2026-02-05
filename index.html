@@ -615,6 +615,21 @@
       to   { transform: translateX(-4px); }
     }
 
+    /* Pink bubble: tiny appearance pop */
+    @keyframes pinkPop {
+      0%   { transform: scale(0.92); }
+      60%  { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    /* Pink bubble: very subtle idle float */
+    @keyframes pinkFloat {
+      0%   { transform: translateY(0px); }
+      50%  { transform: translateY(-0.5px); }
+      100% { transform: translateY(0px); }
+    }
+
+
     /* =========================
       PIXEL CLOCK
     ========================= */
@@ -736,6 +751,144 @@
       bottom: -120px;
     }
 
+    /* =========================
+      VALENTINE'S DAY CAT BUBBLES
+    ========================= */
+
+    .valentines {
+      position: absolute;
+      font-family: 'VT323', monospace;
+      font-size: 14px;
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.15);
+
+      background: #3a3a3a;
+      color: #f3f3f3;
+
+      padding: 4px 8px;
+
+      border-radius: 0;
+      border: 2px solid #222;
+
+      /* pixel block shadow */
+      box-shadow: 1px 1px 0 #222;
+
+      letter-spacing: 1px;
+
+      opacity: 0;
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 30;
+
+      transform: translateY(6px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+
+
+    /* visible state */
+    .valentines.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* black cat (left) speech bubble */
+    .black-cat {
+      bottom: 180px;
+      left: 35px;
+
+      transform: translateY(-10px);
+    }
+    .black-cat.show {
+      transform: translateY(0);
+    }
+
+    .black-cat span::before {
+      content: '"';
+    }
+
+    .black-cat span::after {
+      content: '"';
+    }
+    .black-cat span::before,
+    .black-cat span::after {
+      opacity: 0.85;
+    }
+
+
+    /* pink cat (right) thought bubble */
+    .pink-cat {
+      bottom: 265px;
+      left: 30px;
+      border-radius: 12px;
+      /* softer tone for reaction */
+      background: #ffd6e6;
+      color: #5a2a3a;  
+    }
+
+    .pink-cat.show {
+      animation:
+        pinkPop 0.35s ease-out,
+        pinkFloat 3s ease-in-out infinite 0.35s;
+    }
+
+
+    /* =========================
+      PIXEL TAILS (SEPARATE ELEMENTS)
+    ========================= */
+
+    /* BLACK CAT — speech tail (upward) */
+    /* first pixel (near bubble) */
+    .black-cat .tail-1 {
+      position: absolute;
+      top: -6px;
+      left: 20px;
+
+      width: 4px;
+      height: 4px;
+
+      background: #3a3a3a;
+      border: 1px solid #222;
+    }
+
+    /* second pixel (closer to cat) */
+    .black-cat .tail-2 {
+      position: absolute;
+      top: -11px;
+      left: 24px;
+
+      width: 3px;
+      height: 3px;
+
+      background: #3a3a3a;
+      border: 1px solid #222;
+    }
+
+
+    /* PINK CAT — thought tail (two pixels downward) */
+    .pink-cat .tail-1 {
+      position: absolute;
+      bottom: -6px;
+      left: 14px;
+
+      width: 4px;
+      height: 4px;
+
+      background: #ffd6e6;
+      border: 1px solid #222;
+    }
+
+    .pink-cat .tail-2 {
+      position: absolute;
+      bottom: -12px;
+      left: 18px;
+
+      width: 3px;
+      height: 3px;
+
+      background: #ffd6e6;
+      border: 1px solid #222;
+    }
+
 
   </style>
 </head>
@@ -845,6 +998,15 @@
         <img src="assets/cat/left/night/sleep-3.png">
         <img src="assets/cat/left/night/sleep-4.png">
       </div>
+
+      <!-- Valentine speech bubble (black cat) -->
+      <div class="speech-bubble valentines black-cat">
+        <div class="tail tail-1"></div>
+        <div class="tail tail-2"></div>
+        <span></span>
+      </div>
+
+
     </div>
 
     <!-- RIGHT CAT GROUP (container) -->
@@ -881,6 +1043,15 @@
           <img src="assets/cat/right/night/sleep-3.png">
           <img src="assets/cat/right/night/sleep-4.png">
         </div>
+
+        <!-- Valentine thought bubble (pink cat) -->
+        <div class="thought-bubble valentines pink-cat">
+          <div class="tail tail-1"></div>
+          <div class="tail tail-2"></div>
+          <span></span>
+        </div>
+
+
       </div>
 
     </div>
@@ -947,7 +1118,7 @@
 
       if (t >= 6 && t < 17.5) return 'day';
       if (t >= 17.5 && t < 18.5) return 'evening';
-      return 'night';
+      return 'day';
     }
 
     function animateCat(selector, frameTime) {
@@ -1228,6 +1399,85 @@
     // update every second (cheap & smooth)
     setInterval(updateClock, 1000);
 
+    /* =========================
+      VALENTINE'S DAY CAT DIALOGUE
+    ========================= */
+
+    (function valentinesCats() {
+      const now = new Date();
+      const isValentines = true;
+
+      if (!isValentines || scene.classList.contains('night')) return;
+
+      const blackBubble = document.querySelector('.speech-bubble.black-cat');
+      const pinkBubble = document.querySelector('.thought-bubble.pink-cat');
+      if (!blackBubble || !pinkBubble) return;
+
+      const blackText = blackBubble.querySelector('span');
+      const pinkText = pinkBubble.querySelector('span');
+
+      const blackLines = [
+        "happy valentine’s day:>",
+        "i love you",
+        "you deserve it all",
+        "you’re my favorite person",
+        "my baby"
+      ];
+
+      const pinkLines = [
+        "ehuehuehe",
+        ">///<",
+        "<3 <3 <3",
+        "*blushes*",
+        "muuaahh"
+      ];
+
+      let lastBlack = null;
+      let lastPink = null;
+
+      function pickRandom(arr, last) {
+        if (arr.length === 1) return arr[0];
+        let choice;
+        do {
+          choice = arr[Math.floor(Math.random() * arr.length)];
+        } while (choice === last);
+        return choice;
+      }
+
+      function runCycle() {
+        const blackMsg = pickRandom(blackLines, lastBlack);
+        const pinkMsg = pickRandom(pinkLines, lastPink);
+        lastBlack = blackMsg;
+        lastPink = pinkMsg;
+
+        blackText.textContent = blackMsg;
+        pinkText.textContent = pinkMsg;
+
+        // t = 0 → show black
+        blackBubble.classList.add('show');
+
+        // t = 5 → show pink
+        setTimeout(() => {
+          pinkBubble.classList.add('show');
+        }, 5000);
+
+        // t = 15 → hide black
+        setTimeout(() => {
+          blackBubble.classList.remove('show');
+        }, 15000);
+
+        // t = 20 → hide pink
+        setTimeout(() => {
+          pinkBubble.classList.remove('show');
+        }, 20000);
+
+        // t = 30 → next cycle
+        setTimeout(runCycle, 30000);
+      }
+
+      // small delay so scene settles first
+      setTimeout(runCycle, 2000);
+    })();
 
 
     </script>
