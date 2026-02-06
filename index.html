@@ -1405,7 +1405,11 @@
 
     (function valentinesCats() {
       const now = new Date();
-      const isValentines = true;
+      const isValentines =
+      now.getMonth() === 1 &&
+      now.getDate() === 14 &&
+      !scene.classList.contains('night');
+
 
       if (!isValentines || scene.classList.contains('night')) return;
 
@@ -1483,4 +1487,3 @@
     </script>
 </body>
 </html>
-
